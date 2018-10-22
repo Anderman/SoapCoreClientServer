@@ -14,7 +14,7 @@ namespace SoapCore.Tests.SoapServiceApp
 
 		public void Configure(IApplicationBuilder app)
 		{
-			app.UseSoapEndpoints<Startup>();
+			app.UseSoapServices<Startup>();
 		}
 	}
 }

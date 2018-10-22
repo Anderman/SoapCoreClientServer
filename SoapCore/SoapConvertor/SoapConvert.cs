@@ -5,10 +5,12 @@ namespace SoapCore.SoapConvertor
 {
 	public static class SoapConvert
 	{
-		public static T Deserialize<T>(Stream soapMessage, string soapAction) where T : class
+		public static T Deserialize<T>(Stream soapMessage, string soapAction) where T : class, new()
 		{
 			var serializer = new XmlSerializer<DeserializeEnvelope<T>>();
 			var xmlResult = (DeserializeEnvelope<T>)serializer.Deserialize(new SoapReader(soapMessage, soapAction));
+			if(xmlResult.Body.MessageHeader.SoapMessage==null)
+				xmlResult.Body.MessageHeader.SoapMessage=new T();
 			return xmlResult.Body.MessageHeader.SoapMessage;
 		}
 
@@ -42,7 +44,7 @@ namespace SoapCore.SoapConvertor
 		}
 
 		[XmlRoot(ElementName = "Envelope", Namespace = "ns")]
-		public class DeserializeEnvelope<T>
+		public class DeserializeEnvelope<T> where T : new()
 		{
 			public EnvelopeBody Body { get; set; }
 
@@ -52,7 +54,13 @@ namespace SoapCore.SoapConvertor
 
 				public class SoapMessageHeader
 				{
-					public T SoapMessage { get; set; }
+					private T _soapMessage;
+
+					public T SoapMessage
+					{
+						get => _soapMessage;
+						set => _soapMessage = value!=null? value:new T();
+					}
 				}
 			}
 		}

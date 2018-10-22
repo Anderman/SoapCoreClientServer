@@ -11,7 +11,7 @@ namespace Microsoft.AspNetCore.Hosting
 	public static class ApplicationBuilderExtensions
 	{
 		public static Dictionary<string, OperationDescription> Services = new Dictionary<string, OperationDescription>();
-		public static IApplicationBuilder UseSoapEndpoints<T>(this IApplicationBuilder builder) where T : class
+		public static IApplicationBuilder UseSoapServices<T>(this IApplicationBuilder builder) where T : class
 		{
 			AddAllAssemblyContracts<T>();
 			return builder.UseMiddleware<SoapEndpointMiddleware>(Services);

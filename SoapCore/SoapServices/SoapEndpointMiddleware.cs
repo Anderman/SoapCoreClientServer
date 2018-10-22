@@ -56,6 +56,7 @@ namespace SoapCore.SoapServices
 
 			//Deserialize
 			var parameterType = operation.DispatchMethod.GetParameters().Single().ParameterType;
+			_logger.LogDebug($"parameterType:{parameterType.FullName},operation.Name:{operation.Name}");
 			var request = Deserialize(httpContext, parameterType, operation.Name);
 
 			// Invoke Operation method

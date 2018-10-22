@@ -7,6 +7,7 @@
     <Company>Medella.SoapCore</Company>
     <Product>Medella.SoapCore</Product>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

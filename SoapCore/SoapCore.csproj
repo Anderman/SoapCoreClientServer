@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <PackageId>Medella.SoapCore</PackageId>
+    <Authors>Medella.SoapCore</Authors>
+    <Company>Medella.SoapCore</Company>
+    <Product>Medella.SoapCore</Product>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.1.1" />
+  </ItemGroup>
+
+</Project>

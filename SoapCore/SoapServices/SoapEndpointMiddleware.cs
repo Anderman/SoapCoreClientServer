@@ -32,7 +32,7 @@ namespace SoapCore.SoapServices
 		// ReSharper disable once UnusedMember.Global
 		public async Task Invoke(HttpContext httpContext, IServiceProvider serviceProvider)
 		{
-			if (httpContext.Request.ContentType!=null && httpContext.Request.ContentType.Contains("application/soap+xml", StringComparison.OrdinalIgnoreCase) )
+			if (httpContext.Request.ContentType != null && httpContext.Request.ContentType.Contains("application/soap+xml", StringComparison.OrdinalIgnoreCase))
 			{
 				_logger = (ILogger)serviceProvider.GetService(typeof(ILogger<SoapEndpointMiddleware>));
 				try
@@ -151,10 +151,15 @@ namespace SoapCore.SoapServices
 		{
 			var message = exception.GetAllExceptions();
 			_logger.LogError(exception, message);
-			var faultFrame = string.Format(FaultFrame, message);
+			var faultFrame = string.Format(FaultFrame, Escape(message));
 
 			httpContext.Response.ContentType = "application/soap+xml; charset=utf-8";
 			httpContext.Response.Body.Write(Encoding.UTF8.GetBytes(faultFrame));
+		}
+
+		private string Escape(string s)
+		{
+			return s.Replace("'", "_").Replace("\"", "_").Replace("&", "_").Replace("<", "_");
 		}
 	}
 }

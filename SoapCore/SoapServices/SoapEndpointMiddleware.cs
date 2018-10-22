@@ -160,7 +160,7 @@ namespace SoapCore.SoapServices
 
 		private static string Escape(string s)
 		{
-			return s.Replace("'", "&apos;").Replace("\"", "&quot;").Replace("&", "&amp;").Replace("<", "&lt").Replace(">", "&gt");
+			return s.Replace("'", "&apos;").Replace("\"", "&quot;").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
 		}
 	}
 }

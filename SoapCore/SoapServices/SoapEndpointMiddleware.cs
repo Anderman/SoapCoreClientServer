@@ -157,7 +157,7 @@ namespace SoapCore.SoapServices
 			httpContext.Response.Body.Write(Encoding.UTF8.GetBytes(faultFrame));
 		}
 
-		private string Escape(string s)
+		private static string Escape(string s)
 		{
 			return s.Replace("'", "&apos;").Replace("\"", "&quot;").Replace("&", "&amp;").Replace("<", "&lt").Replace(">", "&gt");
 		}

@@ -152,6 +152,7 @@ namespace SoapCore.SoapServices
 			var message = exception.GetAllExceptions();
 			_logger.LogError(exception, message);
 			var faultFrame = string.Format(FaultFrame, Escape(message));
+			_logger.LogDebug(faultFrame);
 
 			httpContext.Response.ContentType = "application/soap+xml; charset=utf-8";
 			httpContext.Response.Body.Write(Encoding.UTF8.GetBytes(faultFrame));

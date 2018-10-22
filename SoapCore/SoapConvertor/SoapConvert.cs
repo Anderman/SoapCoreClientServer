@@ -5,15 +5,11 @@ namespace SoapCore.SoapConvertor
 {
 	public static class SoapConvert
 	{
-		private static object _result;
-		private static object _messageHeaderSoapMessage;
 
 		public static T Deserialize<T>(Stream soapMessage, string soapAction) where T : class, new()
 		{
 			var serializer = new XmlSerializer<DeserializeEnvelope<T>>();
 			var xmlResult = (DeserializeEnvelope<T>)serializer.Deserialize(new SoapReader(soapMessage, soapAction));
-			_result = xmlResult;
-			_messageHeaderSoapMessage = xmlResult.Body.MessageHeader.SoapMessage;
 			return xmlResult.Body.MessageHeader.SoapMessage;
 		}
 
@@ -57,13 +53,7 @@ namespace SoapCore.SoapConvertor
 
 				public class SoapMessageHeader
 				{
-					private T _soapMessage;
-
-					public T SoapMessage
-					{
-						get => _soapMessage;
-						set => _soapMessage = value!=null? value:new T();
-					}
+					public T SoapMessage { get; set; }
 				}
 			}
 		}

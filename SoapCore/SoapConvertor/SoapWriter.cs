@@ -36,12 +36,12 @@ namespace SoapCore.SoapConvertor
 		}
 		public override void WriteStartElement(string prefix, string localName, string ns)
 		{
-			if (localName == "MessageHeader") localName = _soapType==SoapType.Request? _action: $"{_action}Response";
-			if (localName == "SoapMessage") localName = _soapType == SoapType.Request ? $"{_action}Request" : $"{_action}Result"; 
+			if (localName == "MessageHeader") localName = _soapType == SoapType.Request ? _action : $"{_action}Response";
+			if (localName == "SoapMessage") localName = _soapType == SoapType.Request ? $"{_action}Request" : $"{_action}Result";
 			if (ns == "ns") ns = _ns;
 			base.WriteStartElement(prefix, localName, ns);
 		}
 	}
 
-	public enum SoapType { Request,Response}
+	public enum SoapType { Request, Response }
 }

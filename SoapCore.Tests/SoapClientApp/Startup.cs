@@ -1,11 +1,12 @@
+using System;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SoapCore.SoapClient;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 
 namespace SoapCore.Tests.SoapClientApp
 {
@@ -14,6 +15,7 @@ namespace SoapCore.Tests.SoapClientApp
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddSoapClients();
+			services.AddTransient<SoapController>();
 			services.AddSingleton<ILogger, Logger<Startup>>();
 		}
 
@@ -31,11 +33,26 @@ namespace SoapCore.Tests.SoapClientApp
 		{
 		}
 
-		public async Task<byte[]> Invoke(HttpContext httpContext, SoapClient<Config, DownloadPdfRequest, DownloadPdfResponse> client)
+		public async Task<byte[]> Invoke(HttpContext httpContext, IServiceProvider serviceProvider)
 		{
-			var request = new DownloadPdfRequest { PdfId = 1 };
+			var controller=serviceProvider.GetService<SoapController>();
+			return await controller.DownloadPdf(1);
+		}
+	}
 
-			var result = await client.PostAsync(request);
+	public class SoapController
+	{
+		private readonly SoapClient<Config, DownloadPdfRequest, DownloadPdfResponse> _client;
+
+		public SoapController(SoapClient<Config, DownloadPdfRequest, DownloadPdfResponse> client)
+		{
+			_client = client;
+		}
+
+		public async Task<byte[]> DownloadPdf(int pdfId)
+		{
+			var request = new DownloadPdfRequest { PdfId = pdfId };
+			var result = await _client.PostAsync(request);
 			return result.PdfRetourbestand?.Bestand?.Data;
 		}
 
@@ -53,5 +70,5 @@ namespace SoapCore.Tests.SoapClientApp
 		}
 	}
 
-	
+
 }

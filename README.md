@@ -4,76 +4,86 @@
 Currently net core does not support soap12 addressing for clients, no support for soap services and to complex for most of my projects.
 This implementation allow me to use the same controller for soap and json requests
 
+## nuget
+
+   `PM> Install-Package Medella.SoapCore`
+
 ## Soap service 
 To Use soap services add the following line to your config in the `startup.cs`.
 
-    public void Configure(IApplicationBuilder app)
-		{
-			app.UseSoapServices<Startup>();
-		}
-
+```csharp
+public void Configure(IApplicationBuilder app)
+{
+	app.UseSoapServices<Startup>();
+}
+```
 Now you have to create your soap service interface with the request and response object
 
-	public class IsAliveResponse : object
-	{
-		[XmlElement(Namespace = "urn:www-vecozo-nl:messages:isalive:v1")]
-		public bool Resultaat { get; set; }
-	}
+```csharp
+public class IsAliveResponse : object
+{
+	[XmlElement(Namespace = "urn:www-vecozo-nl:messages:isalive:v1")]
+	public bool Resultaat { get; set; }
+}
 
-	public class IsAliveRequest : object
-	{
-	}
+public class IsAliveRequest : object
+{
+}
 
-	[ServiceContract(Namespace = "urn:www-vecozo-nl:isalive:v1")]
-	public class AliveService
+[ServiceContract(Namespace = "urn:www-vecozo-nl:isalive:v1")]
+public class AliveService
+{
+	[OperationContract(Action = "urn:www-vecozo-nl:v1:isalive", ReplyAction = "urn:www-vecozo-nl:v1:isaliveresponse")]
+	public IsAliveResponse IsAlive(IsAliveRequest request)
 	{
-		[OperationContract(Action = "urn:www-vecozo-nl:v1:isalive", ReplyAction = "urn:www-vecozo-nl:v1:isaliveresponse")]
-		public IsAliveResponse IsAlive(IsAliveRequest request)
-		{
-			return new IsAliveResponse { Resultaat = true };
-		}
+		return new IsAliveResponse { Resultaat = true };
 	}
+}
+```
 
 ## Soap Client
 The soap client can be used when it added to your services in the startup.cs
 
-		public void ConfigureServices(IServiceCollection services)
-		{
-			services.AddSoapClients();
-		}
+```csharp
+public void ConfigureServices(IServiceCollection services)
+{
+	services.AddSoapClients();
+}
+```
 
 Use a client in a controller
 
 
-    public class SoapController
-	  {
-		private readonly SoapClient<Config, DownloadPdfRequest, DownloadPdfResponse> _client;
+```csharp
+public class SoapController
+{
+	private readonly SoapClient<Config, DownloadPdfRequest, DownloadPdfResponse> _client;
 
-		public SoapController(SoapClient<Config, DownloadPdfRequest, DownloadPdfResponse> client)
-		{
-			_client = client;
-		}
-
-		public async Task DownloadPdf(int pdfId)
-		{
-			var request = new DownloadPdfRequest { PdfId = pdfId };
-			var result = await _client.PostAsync(request);
-		}
-
-		public class Config : ISoapConfig
-		{
-			public string Namespace => "urn:www-vecozo-nl:vsp:edp:declareren:downloaden:v1";
-			public string SoapActionElementName => "DownloadPdf";
-			public string SoapAction => $"{Namespace}:{SoapActionElementName}";
-			public X509Certificate ClientCertificate => new SoapClientX509Certificate2(new OutgoingCertificateProvider());
-
-			public string GetUrl(IHostingEnvironment env)
-			{
-				return "https://accedpwebservice.vecozo.nl/Router.V1.svc/DownloadenRetourinformatieV1";
-			}
-		}
+	public SoapController(SoapClient<Config, DownloadPdfRequest, DownloadPdfResponse> client)
+	{
+		_client = client;
 	}
 
+	public async Task DownloadPdf(int pdfId)
+	{
+		var request = new DownloadPdfRequest { PdfId = pdfId };
+		var result = await _client.PostAsync(request);
+	}
+
+	public class Config : ISoapConfig
+	{
+		public string Namespace => "urn:www-vecozo-nl:vsp:edp:declareren:downloaden:v1";
+		public string SoapActionElementName => "DownloadPdf";
+		public string SoapAction => $"{Namespace}:{SoapActionElementName}";
+		public X509Certificate ClientCertificate => new SoapClientX509Certificate2(new OutgoingCertificateProvider());
+
+		public string GetUrl(IHostingEnvironment env)
+		{
+			return "https://accedpwebservice.vecozo.nl/Router.V1.svc/DownloadenRetourinformatieV1";
+		}
+	}
+}
+```
 
 ## Backgroud
 ### Soap service implementation

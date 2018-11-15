@@ -9,14 +9,16 @@ namespace SoapCore.SoapConvertor
 		private readonly string _action;
 		private readonly string _ns;
 		private readonly SoapType _soapType;
+		private readonly string _xmlElementRequestName;
 		private readonly StringWriter _sw;
 
-		public SoapWriter(StringWriter sw, string action, string ns, SoapType soapType) : base(sw)
+		public SoapWriter(StringWriter sw, string action, string ns, SoapType soapType, string xmlElementRequestName) : base(sw)
 		{
 			_sw = sw;
 			_action = action;
 			_ns = ns;
 			_soapType = soapType;
+			_xmlElementRequestName = xmlElementRequestName;
 		}
 		public SoapWriter(Stream w, Encoding encoding) : base(w, encoding)
 		{
@@ -37,7 +39,7 @@ namespace SoapCore.SoapConvertor
 		public override void WriteStartElement(string prefix, string localName, string ns)
 		{
 			if (localName == "MessageHeader") localName = _soapType == SoapType.Request ? _action : $"{_action}Response";
-			if (localName == "SoapMessage") localName = _soapType == SoapType.Request ? $"{_action}Request" : $"{_action}Result";
+			if (localName == "SoapMessage") localName = _soapType == SoapType.Request ? _xmlElementRequestName??$"{_action}Request" : $"{_action}Result";
 			if (ns == "ns") ns = _ns;
 			base.WriteStartElement(prefix, localName, ns);
 		}

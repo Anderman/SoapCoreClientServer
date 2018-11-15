@@ -1,25 +1,27 @@
 ﻿using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Xml.Serialization;
 
 namespace SoapCore.SoapConvertor
 {
 	public static class SoapConvert
 	{
-
 		public static T Deserialize<T>(Stream soapMessage, string soapAction) where T : class, new()
 		{
 			var serializer = new XmlSerializer<DeserializeEnvelope<T>>();
-			var xmlResult = (DeserializeEnvelope<T>)serializer.Deserialize(new SoapReader(soapMessage, soapAction));
+			var xmlResult = (DeserializeEnvelope<T>) serializer.Deserialize(new SoapReader(soapMessage, soapAction));
 			return xmlResult.Body.MessageHeader.SoapMessage;
 		}
 
 		public static string Serialize<T>(T obj, string soapAction, string messageNameSpace, SoapType soapType)
 		{
+			var xmlElementRequestName = typeof(T).GetTypeInfo().GetCustomAttributes<XmlTypeAttribute>().FirstOrDefault()?.TypeName;
 			var env = new SerializeEnvelope<T>();
 			env.Body.MessageHeader.SoapMessage = obj;
 			var serializer = new XmlSerializer<SerializeEnvelope<T>>();
 			var sw = new Utf8StringWriter();
-			var x = new SoapWriter(sw, soapAction, messageNameSpace, soapType);
+			var x = new SoapWriter(sw, soapAction, messageNameSpace, soapType, xmlElementRequestName);
 			serializer.Serialize(x, env);
 			var result = x.ToString();
 			return result;

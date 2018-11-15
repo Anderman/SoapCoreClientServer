@@ -1,4 +1,6 @@
 using System.Threading.Tasks;
+using System.Xml.Serialization;
+using SoapCore.SoapConvertor;
 using SoapCore.Tests.SoapClientApp;
 using Xunit;
 
@@ -19,5 +21,18 @@ namespace SoapCore.Tests.SoapClient
 			var result= await client.GetAsync("");
 			Assert.NotNull(result);
 		}
+
+		[Fact]
+		public void Can_set_XmlElementName_of_the_request_attribute()
+		{
+			var z = new TestType();
+			var result =SoapConvert.Serialize(z, "action", "ns2", SoapType.Request);
+			Assert.Equal(222,result?.IndexOf("test123"));
+		}
+	}
+
+	[XmlType(TypeName="test123")]
+	public class TestType
+	{
 	}
 }

@@ -7,6 +7,8 @@ using Microsoft.Extensions.Logging;
 using SoapCore.SoapClient;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
+// ReSharper disable IdentifierTypo
+// ReSharper disable StringLiteralTypo
 
 namespace SoapCore.Tests.SoapClientApp
 {
@@ -17,6 +19,7 @@ namespace SoapCore.Tests.SoapClientApp
 			services.AddSoapClients();
 			services.AddTransient<SoapController>();
 			services.AddSingleton<ILogger, Logger<Startup>>();
+			services.AddSingleton<ICertificateProvider, CertificateProvider>();
 		}
 
 		public void Configure(IApplicationBuilder app)
@@ -61,13 +64,17 @@ namespace SoapCore.Tests.SoapClientApp
 			public string Namespace => "urn:www-vecozo-nl:vsp:edp:declareren:downloaden:v1";
 			public string SoapActionElementName => "DownloadPdf";
 			public string SoapAction => $"{Namespace}:{SoapActionElementName}";
-			public X509Certificate ClientCertificate => new SoapClientX509Certificate2(new OutgoingCertificateProvider());
 
 			public string GetUrl(IHostingEnvironment env)
 			{
 				return "https://accedpwebservice.vecozo.nl/Router.V1.svc/DownloadenRetourinformatieV1";
 			}
 		}
+
+	}
+	public class CertificateProvider : ICertificateProvider
+	{
+		public X509Certificate2 Certificate2 => new SoapClientX509Certificate2(new OutgoingCertificateProvider());
 	}
 
 

@@ -1,5 +1,4 @@
-﻿using System.Security.Cryptography.X509Certificates;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 
 namespace SoapCore.SoapClient
 {
@@ -7,8 +6,7 @@ namespace SoapCore.SoapClient
 	{
 		string Namespace { get; }
 		string SoapActionElementName { get; }
-		string GetUrl(IHostingEnvironment env);
 		string SoapAction { get; }
-		X509Certificate ClientCertificate { get; }
+		string GetUrl(IHostingEnvironment env);
 	}
 }

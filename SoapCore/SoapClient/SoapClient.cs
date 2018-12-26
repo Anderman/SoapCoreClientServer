@@ -15,12 +15,12 @@ namespace SoapCore.SoapClient
 		private readonly IHostingEnvironment _env;
 		private readonly ILogger _logger;
 
-		public SoapClient(IHostingEnvironment env, ILogger logger)
+		public SoapClient(IHostingEnvironment env, ILogger logger, ICertificateProvider certificateProvider)
 		{
 			_env = env;
 			_logger = logger;
 			_config = new TConfig();
-			_client = new HttpClient(new HttpClientHandler { ClientCertificates = { _config.ClientCertificate } });
+			_client = new HttpClient(new HttpClientHandler { ClientCertificates = { certificateProvider.Certificate2 } });
 		}
 
 		public async Task<TResponse> PostAsync(TRequest request)

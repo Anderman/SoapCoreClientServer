@@ -13,9 +13,9 @@ namespace SoapCore.SoapClient
 		private readonly HttpClient _client;
 		private readonly TConfig _config;
 		private readonly IHostingEnvironment _env;
-		private readonly ILogger _logger;
+		private readonly ILogger<SoapClient<TConfig, TRequest, TResponse>> _logger;
 
-		public SoapClient(IHostingEnvironment env, ILogger logger, ICertificateProvider certificateProvider)
+		public SoapClient(IHostingEnvironment env, ILogger<SoapClient<TConfig,TRequest,TResponse>> logger, ICertificateProvider certificateProvider)
 		{
 			_env = env;
 			_logger = logger;

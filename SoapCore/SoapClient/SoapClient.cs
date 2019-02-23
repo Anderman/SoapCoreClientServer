@@ -1,11 +1,10 @@
 ﻿using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Net.Http.Headers;
 using SoapCore.Extensions;
 using SoapCore.SoapConvertor;
-using NameValueHeaderValue = System.Net.Http.Headers.NameValueHeaderValue;
 
 namespace SoapCore.SoapClient
 {
@@ -15,8 +14,9 @@ namespace SoapCore.SoapClient
 		private readonly TConfig _config;
 		private readonly IHostingEnvironment _env;
 		private readonly ILogger<SoapClient<TConfig, TRequest, TResponse>> _logger;
+		public string Url;
 
-		public SoapClient(IHostingEnvironment env, ILogger<SoapClient<TConfig,TRequest,TResponse>> logger, ICertificateProvider certificateProvider)
+		public SoapClient(IHostingEnvironment env, ILogger<SoapClient<TConfig, TRequest, TResponse>> logger, ICertificateProvider certificateProvider)
 		{
 			_env = env;
 			_logger = logger;
@@ -24,12 +24,10 @@ namespace SoapCore.SoapClient
 			_client = new HttpClient(new HttpClientHandler { ClientCertificates = { certificateProvider.Certificate2 } });
 		}
 
-		public string Url;
-
 		public async Task<TResponse> PostAsync(TRequest request)
 		{
 			var xmlContent = GetSoapContent(request);
-			var result = await _client.PostAsync(Url??_config.GetUrl(_env), xmlContent);
+			var result = await _client.PostAsync(Url ?? _config.GetUrl(_env), xmlContent);
 			var stream = await result.Content.ReadAsStreamAsync();
 			_logger.Log(LogLevel.Debug, $"Soap response:{stream.ToText()}");
 

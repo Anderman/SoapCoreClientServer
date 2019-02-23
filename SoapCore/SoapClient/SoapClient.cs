@@ -1,10 +1,12 @@
-﻿using System.Net.Http;
+﻿using System.IO;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using SoapCore.Extensions;
 using SoapCore.SoapConvertor;
+using SoapCore.SoapServices;
 
 namespace SoapCore.SoapClient
 {
@@ -31,7 +33,8 @@ namespace SoapCore.SoapClient
 			var stream = await result.Content.ReadAsStreamAsync();
 			_logger.Log(LogLevel.Debug, $"Soap response:{stream.ToText()}");
 
-			result.EnsureSuccessStatusCode();
+			if(!result.IsSuccessStatusCode)
+				throw new SoapException(new StreamReader(stream).ReadToEnd());
 			return SoapConvert.Deserialize<TResponse>(stream, _config.SoapActionElementName);
 		}
 
